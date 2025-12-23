@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  mobile        String?  @unique
+  email         String?  @unique
+  isWhatsApp    Boolean  @default(true)
+  password      String
+  name          String?
+  role          String   @default("USER") // USER, AFFILIATE, ADMIN
+  createdAt     DateTime @default(now())
+  
+  // Affiliate specific
+  affiliateCode String?  @unique // The code they share e.g. "AMIT20"
+  commissionRate Float   @default(0.10) // 10% default
+  walletBalance Float    @default(0.0)
+  referredOrders Order[] @relation("AffiliateOrders")
+  
+  orders        Order[]  @relation("CustomerOrders")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  images      String   // JSON string or comma-separated URLs (SQLite doesn't support String[])
+  category    String
+  tags        String   // JSON string
+  stock       Int      @default(100)
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          String
+  user            User        @relation("CustomerOrders", fields: [userId], references: [id])
+  
+  affiliateCode   String?
+  affiliate       User?       @relation("AffiliateOrders", fields: [affiliateCode], references: [affiliateCode])
+  
+  items           OrderItem[]
+  
+  totalAmount     Float
+  shippingFee     Float
+  discountAmount  Float       @default(0.0)
+  finalAmount     Float
+  
+  status          String      @default("PENDING") // PENDING, PROCESSING, SHIPPED...
+  paymentId       String?
+  
+  createdAt       DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  
+  quantity  Int
+  price     Float   // Snapshot of price at time of order
+  
+  customImage String? // If it's a POD custom upload
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  userId    String
+  productId String
+  quantity  Int     @default(1)
+  customImage String? // For custom uploads
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, productId]) // One cart item per product per user
+}
+

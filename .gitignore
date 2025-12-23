@@ -1,0 +1,22 @@
+node_modules
+.env
+Canva_posters
+chrome_profile
+local_pdfs
+processed_images.txt
+Ready_to_Upload
+backend/uploads
+Old/
+Old Posters (OG )/
+*.exe
+*.zip
+*.log
+pinterest_scraper/
+
+Email_automation_final/
+
+# Security files - DO NOT COMMIT
+secrets-to-remove.txt
+SECURITY_AUDIT.md
+NEONDB_AND_GIT_CLEANUP_GUIDE.md
+*.jar

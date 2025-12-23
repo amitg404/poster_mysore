@@ -1,0 +1,9 @@
+{
+  "name": "canva-automation",
+  "version": "1.0.0",
+  "description": "Automate Canva design creation from images",
+  "main": "automate_canva.js",
+  "dependencies": {
+    "puppeteer-core": "^21.0.0"
+  }
+}
