@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Environment variables (NEVER COMMIT!)
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+.next/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Uploads (local dev only)
+uploads/
+
+# Customer Orders (local processing)
+Customer_Orders/
+processed_orders.txt
+
+# Prisma
+prisma/*.db
+prisma/*.db-journal

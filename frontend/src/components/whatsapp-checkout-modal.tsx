@@ -29,6 +29,25 @@ export function WhatsAppCheckoutModal({ isOpen, onClose, cartItems, totalAmount,
 
   const loadRazorpay = () => {
     return new Promise((resolve) => {
+      // Check if Razorpay is already loaded
+      if ((window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
+      
+      // Check if script is already in the DOM
+      const existingScript = document.querySelector('script[src*="razorpay"]');
+      if (existingScript) {
+        // Wait for it to load
+        existingScript.addEventListener('load', () => resolve(true));
+        // If it's already loaded but Razorpay isn't defined, give it a moment
+        setTimeout(() => {
+          if ((window as any).Razorpay) resolve(true);
+          else resolve(false);
+        }, 500);
+        return;
+      }
+      
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.onload = () => resolve(true);

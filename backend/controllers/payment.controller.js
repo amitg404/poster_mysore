@@ -12,6 +12,7 @@ const instance = new Razorpay({
 
 const { calculateCartTotal } = require('../utils/pricing');
 const { sendOrderEmail } = require('../utils/emailService');
+const { notifyNewOrder } = require('../utils/notificationService');
 
 exports.createOrder = async (req, res) => {
     try {
@@ -122,6 +123,16 @@ exports.verifyPayment = async (req, res) => {
                     }
                 });
                 console.log("✅ Ntfy notification sent");
+                
+                // --- TELEGRAM + ADMIN EMAIL NOTIFICATION ---
+                await notifyNewOrder({
+                    amount,
+                    orderId: razorpay_order_id,
+                    items,
+                    dropZone,
+                    customerName: user?.name || 'Unknown',
+                    customerContact: user?.mobile || user?.email || 'No Contact'
+                });
             } catch (notifyErr) {
                 console.error("❌ Failed to send Ntfy notification:", notifyErr.message);
                 // Don't block the response
